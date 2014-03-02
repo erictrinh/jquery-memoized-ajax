@@ -4,7 +4,7 @@
   "description": "A jQuery plugin for caching $.ajax calls",
   "main": "jquery.memoized.ajax.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp test"
   },
   "keywords": [
     "jQuery",
@@ -30,6 +30,7 @@
     "gulp-karma": "0.0.2",
     "mocha": "~1.17.1",
     "karma-mocha": "~0.1.1",
-    "karma-sinon-chai": "~0.1.4"
+    "karma-sinon-chai": "~0.1.4",
+    "karma-safari-launcher": "~0.1.1"
   }
 }

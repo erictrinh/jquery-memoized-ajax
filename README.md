@@ -1,6 +1,6 @@
-# jquery Memoized Ajax
+# jQuery Memoized Ajax
 
-Memoization is a technique for caching the results of expensive function calls so that subsequent calls (given the same inputs) are very fast. This property is also useful for expensive AJAX calls. This plugin adds a method called `$.memoizedAjax` that behaves exactly like `$.ajax`, but caches the result in localStorage. The next time `memoizedAjax` is called with the same `data` and `url` arguments, it will return the result immediately, in the form of a resolved `$.Deferred` (if you have no idea what a deferred is, that's ok. Just treat this exactly like `$.ajax`...with a few caveats. See below).
+Memoization is a technique for caching the results of expensive function calls so that subsequent calls (given the same inputs) are very fast. This property is also useful for expensive AJAX calls. This plugin adds a method called `$.memoizedAjax` that behaves exactly like `$.ajax`, but caches the result in localStorage. The next time `memoizedAjax` is called with the same `data` and `url` arguments, it will return the result immediately, in the form of a resolved `$.Deferred`. (If you have no idea what a deferred is, that's ok. Just treat this exactly like `$.ajax`...with a few caveats. See below.)
 
 ## Example usage
 
@@ -45,3 +45,9 @@ ajaxCall.abort && ajaxCall.abort();
 ```
 
 One other thing to keep in mind is that **accessing localStorage is a blocking process**. Thus, it's not a good idea to do 10 `memoizedAjax` calls in a row, as this can lock up your web page.
+
+## Development
+
+Clone this repo, then `npm install` and `bower install`. Tests and builds are run using gulp, so you'll need to install that with `npm install gulp -g`. You may need `sudo`.
+
+Running `gulp` will watch files for changes and run tests on change. `gulp build` will run tests and then minify the script.
