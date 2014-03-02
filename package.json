@@ -1,0 +1,35 @@
+{
+  "name": "jquery-memoized-ajax",
+  "version": "0.0.0",
+  "description": "A jQuery plugin for caching $.ajax calls",
+  "main": "jquery.memoized.ajax.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "jQuery",
+    "ajax",
+    "cache"
+  ],
+  "author": "Eric Trinh",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "~3.5.5",
+    "gulp-uglify": "~0.2.1",
+    "gulp-rename": "~1.1.0",
+    "karma-script-launcher": "~0.1.0",
+    "karma-chrome-launcher": "~0.1.2",
+    "karma-firefox-launcher": "~0.1.3",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-jasmine": "~0.1.5",
+    "karma-coffee-preprocessor": "~0.1.3",
+    "requirejs": "~2.1.11",
+    "karma-requirejs": "~0.2.1",
+    "karma-phantomjs-launcher": "~0.1.2",
+    "karma": "~0.10.9",
+    "gulp-karma": "0.0.2",
+    "mocha": "~1.17.1",
+    "karma-mocha": "~0.1.1",
+    "karma-sinon-chai": "~0.1.4"
+  }
+}
