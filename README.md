@@ -2,7 +2,16 @@
 
 Memoization is a technique for caching the results of expensive function calls so that subsequent calls (given the same inputs) are very fast. This property is also useful for expensive AJAX calls. This plugin adds a method called `$.memoizedAjax` that behaves exactly like `$.ajax`, but caches the result in localStorage. The next time `memoizedAjax` is called with the same `data` and `url` arguments, it will return the result immediately, in the form of a resolved `$.Deferred`. (If you have no idea what a deferred is, that's ok. Just treat this exactly like `$.ajax`...with a few caveats. See below.)
 
-## Example usage
+## Install
+
+Two options:
+
+  * Install via bower with `bower install jquery-memoized-ajax`
+  * Clone the repo and grab `jquery.memoized.ajax.js`.
+
+This plugin is dependent on jQuery, so include this after jQuery on your page with a script tag, or use RequireJS.
+
+## Example Usage
 
 Use it exactly how you would use `$.ajax`.
 
