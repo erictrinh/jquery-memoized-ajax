@@ -17,7 +17,7 @@ gulp.task('test', function() {
     }));
 });
 
-gulp.task('minify', function(){
+gulp.task('build', ['test'], function(){
   gulp.src('jquery.memoized.ajax.js')
     .pipe(uglify())
     .pipe(rename({ suffix: '.min' }))
