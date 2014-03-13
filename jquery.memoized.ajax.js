@@ -7,35 +7,54 @@
       factory(jQuery);
   }
 }(function ($) {
+  var inMemory = {};
+
   $.memoizedAjax = function memoizedAjax(opts) {
-    var memo = store(getLocalStorageAddress(opts.url)) || {},
+    var memo,
+      url = opts.url,
       hash = hashFunc(opts.data);
+
+    if (inMemory[url]) {
+      memo = inMemory[url];
+    } else {
+      memo = inMemory[url] = (opts.localStorage ? store(getStorageAddress(url)) : {}) || {};
+    }
 
     if (memo[hash]) {
       return $.Deferred().resolve(memo[hash])
+        // store this in localStorage to deal with calling with
+        // `localStorage: false` and then `localStorage: true` later
+        // ensures syncing between memory and localStorage
+        .done(function() {
+          if (opts.localStorage) {
+            store(getStorageAddress(url), memo);
+          }
+        })
         // no error callback, since this should never fail...theoretically
         .done(opts.success)
         .always(opts.complete);
     }
 
     return $.ajax.call(this, opts).done(function(result) {
-      // have to re-get memo from localStorage in case there are other
-      // ajax requests that will have added new keys before this runs
-      var memo = store(getLocalStorageAddress(opts.url)) || {};
       memo[hash] = result;
-      store(getLocalStorageAddress(opts.url), memo);
+
+      if (opts.localStorage) {
+        store(getStorageAddress(url), memo);
+      }
     });
   };
 
-  function getLocalStorageAddress(url) {
+  function getStorageAddress(url) {
     return 'memoizedAjax | ' + url;
   }
 
   function store(key, value) {
     var item;
+    // get
     if (value === undefined) {
       item = localStorage.getItem(key);
       return item && JSON.parse(item);
+    // set
     } else {
       localStorage.setItem(key, JSON.stringify(value));
     }

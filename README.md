@@ -1,6 +1,6 @@
 # jQuery Memoized Ajax
 
-Memoization is a technique for caching the results of expensive function calls so that subsequent calls (given the same inputs) are very fast. This property is also useful for expensive AJAX calls. This plugin adds a method called `$.memoizedAjax` that behaves exactly like `$.ajax`, but caches the result in localStorage. The next time `memoizedAjax` is called with the same `data` and `url` arguments, it will return the result immediately, in the form of a resolved `$.Deferred`. (If you have no idea what a deferred is, that's ok. Just treat this exactly like `$.ajax`...with a few caveats. See below.)
+Memoization is a technique for caching the results of expensive function calls so that subsequent calls (given the same inputs) are very fast. This property is also useful for expensive AJAX calls. This plugin adds a method to jQuery called `$.memoizedAjax` that behaves exactly like `$.ajax`, but caches the result in memory (and optionally, localStorage). The next time `memoizedAjax` is called with the same `data` and `url` arguments, it will return the result immediately, in the form of a resolved `$.Deferred`. (If you have no idea what a deferred is, that's ok. Just treat this exactly like `$.ajax`...with a few caveats. See below.)
 
 ## Install
 
@@ -9,24 +9,26 @@ Two options:
   * Install via bower with `bower install jquery-memoized-ajax`
   * Clone the repo and grab `jquery.memoized.ajax.js`.
 
-This plugin is dependent on jQuery, so include this after jQuery on your page with a script tag, or use RequireJS.
+**This plugin is dependent on jQuery**, so include this after jQuery on your page with a script tag, or use RequireJS.
 
 ## Example Usage
 
-Use it exactly how you would use `$.ajax`.
+Use it exactly how you would use `$.ajax`. Optionally, pass in `localStorage: true` as one of the key-value pairs to cache the result in localStorage. An example:
 
 ```javascript
 // this goes and does the ajax call and logs the result after some time
 $.memoizedAjax({
   url: '/reallyFreakinSlowLookup',
+  localStorage: true, // this is optional (and defaults to false)
   type: 'GET',
   data: { name: 'Bobby Tables' },
   success: function(person) { console.log(person.age); }
 });
 
-// this resolves immediately, with no ajax call, and logs the result
+// this resolves immediately (reading from localStorage), and logs the result
 $.memoizedAjax({
   url: '/reallyFreakinSlowLookup',
+  localStorage: true,
   type: 'GET',
   data: { name: 'Bobby Tables' },
   success: function(person) { console.log(person.age); }
@@ -53,7 +55,7 @@ ajaxCall.abort(); // will throw an error if $.memoizedAjax() returns a cached re
 ajaxCall.abort && ajaxCall.abort();
 ```
 
-One other thing to keep in mind is that **accessing localStorage is a blocking process**. Thus, it's not a good idea to do 10 `memoizedAjax` calls in a row, as this can lock up your web page.
+One other thing to keep in mind is that **accessing localStorage is a blocking process**. Thus, it's not a good idea to do 10 `memoizedAjax` calls with localStorage in a row, as this can lock up your web page.
 
 ## Development
 
