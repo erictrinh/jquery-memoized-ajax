@@ -20,6 +20,7 @@ Use it exactly how you would use `$.ajax`. Optionally, pass in `localStorage: tr
 $.memoizedAjax({
   url: '/reallyFreakinSlowLookup',
   localStorage: true, // this is optional (and defaults to false)
+  cacheKey: "memoizedAjax", // this is optional, allows easier deletion of your cache
   type: 'GET',
   data: { name: 'Bobby Tables' },
   success: function(person) { console.log(person.age); }
@@ -29,6 +30,7 @@ $.memoizedAjax({
 $.memoizedAjax({
   url: '/reallyFreakinSlowLookup',
   localStorage: true,
+  cacheKey: "memoizedAjax",
   type: 'GET',
   data: { name: 'Bobby Tables' },
   success: function(person) { console.log(person.age); }

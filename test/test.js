@@ -84,6 +84,20 @@ describe('memoizedAjax', function() {
     }));
   });
 
+  it('should have a cacheKey equal to the passed option', function() {
+    $.memoizedAjax(extend(ajaxOptions, {
+      localStorage: true,
+      cacheKey: "testKey",
+      success: function(results) {
+        expect(localStorage.getItem('testKey | /test')).to.not.be.null;
+      }
+    }));
+  });
+
+  it('should have two cached results', function() {
+    expect(localStorage).length.to.be(2);
+  });
+
   // utility functions
   // =================
 
