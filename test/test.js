@@ -75,13 +75,42 @@ describe('memoizedAjax', function() {
     expect(localStorage.getItem('memoizedAjax | /test')).to.be.null;
   });
 
-  it('should store the results in localStorage if option is passed', function() {
+  it('should store the results in localStorage if option is passed', function(done) {
     $.memoizedAjax(extend(ajaxOptions, {
       localStorage: true,
       success: function(results) {
         expect(localStorage.getItem('memoizedAjax | /test')).to.not.be.null;
+        done();
       }
     }));
+  });
+
+  var cacheKeyParams = {
+    url: '/cacheKey',
+    localStorage: true,
+    cacheKey: 'testKey'
+  };
+
+  it('should call ajax the first time, using cacheKey', function(done) {
+    $.memoizedAjax(extend(ajaxOptions, cacheKeyParams, {
+      success: function() {
+        expect($.ajax.calledThrice).to.be.true;
+        done();
+      }
+    }));
+  });
+
+  it('should not store results in default localStorage location if using cacheKey', function(done) {
+    $.memoizedAjax(extend(ajaxOptions, cacheKeyParams, {
+      success: function(results) {
+        expect(localStorage.getItem('memoizedAjax | /cacheKey')).to.be.null;
+        done();
+      }
+    }));
+  });
+
+  it('should store results in localStorage location defined by cacheKey', function() {
+    expect(localStorage.getItem('testKey')).to.not.be.null;
   });
 
   // utility functions

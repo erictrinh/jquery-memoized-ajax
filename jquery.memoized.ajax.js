@@ -11,13 +11,13 @@
 
   $.memoizedAjax = function memoizedAjax(opts) {
     var memo,
-      url = opts.url,
+      key = opts.cacheKey || opts.url,
       hash = hashFunc(opts.data);
 
-    if (inMemory[url]) {
-      memo = inMemory[url];
+    if (inMemory[key]) {
+      memo = inMemory[key];
     } else {
-      memo = inMemory[url] = (opts.localStorage ? store(getStorageAddress(url)) : {}) || {};
+      memo = inMemory[key] = (opts.localStorage ? store(getStorageAddress()) : {}) || {};
     }
 
     if (memo[hash]) {
@@ -27,7 +27,7 @@
         // ensures syncing between memory and localStorage
         .done(function() {
           if (opts.localStorage) {
-            store(getStorageAddress(url), memo);
+            store(getStorageAddress(), memo);
           }
         })
         // no error callback, since this should never fail...theoretically
@@ -39,14 +39,14 @@
       memo[hash] = result;
 
       if (opts.localStorage) {
-        store(getStorageAddress(url), memo);
+        store(getStorageAddress(), memo);
       }
     });
-  };
 
-  function getStorageAddress(url) {
-    return 'memoizedAjax | ' + url;
-  }
+    function getStorageAddress() {
+      return opts.cacheKey || ('memoizedAjax | ' + opts.url);
+    }
+  };
 
   function store(key, value) {
     var item;
@@ -63,4 +63,5 @@
   function hashFunc(hash) {
     return JSON.stringify(hash);
   }
+
 }));

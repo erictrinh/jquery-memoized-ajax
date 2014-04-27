@@ -1,6 +1,6 @@
 {
   "name": "jquery-memoized-ajax",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "A jQuery plugin for caching $.ajax calls",
   "main": "jquery.memoized.ajax.js",
   "scripts": {

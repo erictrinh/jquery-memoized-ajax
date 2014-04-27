@@ -57,6 +57,34 @@ ajaxCall.abort && ajaxCall.abort();
 
 One other thing to keep in mind is that **accessing localStorage is a blocking process**. Thus, it's not a good idea to do 10 `memoizedAjax` calls with localStorage in a row, as this can lock up your web page.
 
+## Advanced
+
+### Customizing storage location
+
+By default, `$.memoizedAjax` will store the results of ajax calls in localStorage with `memoizedAjax | url` as the key. For example, if you do this:
+
+```javascript
+$.memoizedAjax({
+  url: '/really/long/url',
+  localStorage: true,
+  ...
+});
+```
+
+The result is stored under `localStorage['memoizedAjax | /really/long/url']`.
+
+In some cases, you will want to customize the key that memoizedAjax uses to cache the results of an ajax call. This might be useful if you want to clear the cache for specific ajax calls within your application. Use the `cacheKey` parameter, like this:
+
+```javascript
+$.memoizedAjax({
+  url: '/lookup',
+  localStorage: true,
+  cacheKey: 'foobar'
+});
+```
+
+Now, the result is cached under `localStorage.foobar`.
+
 ## Development
 
 Clone this repo, then `npm install` and `bower install`. Tests and builds are run using gulp, so you'll need to install that with `npm install gulp -g`. You may need `sudo`.
