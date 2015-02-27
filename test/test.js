@@ -85,14 +85,28 @@ describe('memoizedAjax', function() {
     }));
   });
 
-  var cacheKeyParams = {
+  it('should not have the results in sessionStorage if no option passed', function() {
+    expect(sessionStorage.getItem('memoizedAjax | /test')).to.be.null;
+  });
+
+  it('should store the results in sessionStorage if option is passed', function(done) {
+    $.memoizedAjax(extend(ajaxOptions, {
+      sessionStorage: true,
+      success: function(results) {
+        expect(sessionStorage.getItem('memoizedAjax | /test')).to.not.be.null;
+        done();
+      }
+    }));
+  });
+
+  var localCacheKeyParams = {
     url: '/cacheKey',
     localStorage: true,
     cacheKey: 'testKey'
   };
 
   it('should call ajax the first time, using cacheKey', function(done) {
-    $.memoizedAjax(extend(ajaxOptions, cacheKeyParams, {
+    $.memoizedAjax(extend(ajaxOptions, localCacheKeyParams, {
       success: function() {
         expect($.ajax.calledThrice).to.be.true;
         done();
@@ -101,7 +115,7 @@ describe('memoizedAjax', function() {
   });
 
   it('should not store results in default localStorage location if using cacheKey', function(done) {
-    $.memoizedAjax(extend(ajaxOptions, cacheKeyParams, {
+    $.memoizedAjax(extend(ajaxOptions, localCacheKeyParams, {
       success: function(results) {
         expect(localStorage.getItem('memoizedAjax | /cacheKey')).to.be.null;
         done();
@@ -111,6 +125,34 @@ describe('memoizedAjax', function() {
 
   it('should store results in localStorage location defined by cacheKey', function() {
     expect(localStorage.getItem('testKey')).to.not.be.null;
+  });
+
+  var sessionCacheKeyParams = {
+    url: '/cacheKey',
+    sessionStorage: true,
+    cacheKey: 'testKey'
+  };
+
+  it('should call ajax the first time, using cacheKey', function(done) {
+    $.memoizedAjax(extend(ajaxOptions, sessionCacheKeyParams, {
+      success: function() {
+        expect($.ajax.calledThrice).to.be.true;
+        done();
+      }
+    }));
+  });
+
+  it('should not store results in default sessionStorage location if using cacheKey', function(done) {
+    $.memoizedAjax(extend(ajaxOptions, sessionCacheKeyParams, {
+      success: function(results) {
+        expect(localStorage.getItem('memoizedAjax | /cacheKey')).to.be.null;
+        done();
+      }
+    }));
+  });
+
+  it('should store results in sessionStorage location defined by cacheKey', function() {
+    expect(sessionStorage.getItem('testKey')).to.not.be.null;
   });
 
   // utility functions
