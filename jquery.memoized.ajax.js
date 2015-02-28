@@ -17,7 +17,8 @@
     if (inMemory[key]) {
       memo = inMemory[key];
     } else {
-      memo = inMemory[key] = (opts.localStorage ? store(getStorageAddress()) : {}) || {};
+      var storage = storageObject(opts);
+      memo = inMemory[key] = (storage ? store(storage, getStorageAddress()) : {}) || {};
     }
 
     if (memo[hash]) {
@@ -26,8 +27,9 @@
         // `localStorage: false` and then `localStorage: true` later
         // ensures syncing between memory and localStorage
         .done(function() {
-          if (opts.localStorage) {
-            store(getStorageAddress(), memo);
+          var storage = storageObject(opts);
+          if (storage) {
+            store(storage, getStorageAddress(), memo);
           }
         })
         // no error callback, since this should never fail...theoretically
@@ -38,8 +40,10 @@
     return $.ajax.call(this, opts).done(function(result) {
       memo[hash] = result;
 
-      if (opts.localStorage) {
-        store(getStorageAddress(), memo);
+      var storage = storageObject(opts);
+
+      if (storage) {
+        store(storage, getStorageAddress(), memo);
       }
     });
 
@@ -48,15 +52,24 @@
     }
   };
 
-  function store(key, value) {
-    var item;
+  function store(storage, key, value) {
+    if (!storage) { throw new Error("Storage object is undefined"); }
+
     // get
     if (value === undefined) {
-      item = localStorage.getItem(key);
+      var item = storage.getItem(key);
       return item && JSON.parse(item);
     // set
     } else {
-      localStorage.setItem(key, JSON.stringify(value));
+      storage.setItem(key, JSON.stringify(value));
+    }
+  }
+
+  function storageObject(opts) {
+    if (opts.localStorage) {
+      return localStorage;
+    } else if (opts.sessionStorage) {
+      return sessionStorage;
     }
   }
 

@@ -1,6 +1,6 @@
 # jQuery Memoized Ajax
 
-Memoization is a technique for caching the results of expensive function calls so that subsequent calls (given the same inputs) are very fast. This property is also useful for expensive AJAX calls. This plugin adds a method to jQuery called `$.memoizedAjax` that behaves exactly like `$.ajax`, but caches the result in memory (and optionally, localStorage). The next time `memoizedAjax` is called with the same `data` and `url` arguments, it will return the result immediately, in the form of a resolved `$.Deferred`. (If you have no idea what a deferred is, that's ok. Just treat this exactly like `$.ajax`...with a few caveats. See below.)
+Memoization is a technique for caching the results of expensive function calls so that subsequent calls (given the same inputs) are very fast. This property is also useful for expensive AJAX calls. This plugin adds a method to jQuery called `$.memoizedAjax` that behaves exactly like `$.ajax`, but caches the result in memory (and optionally, localStorage or sessionStorage). The next time `memoizedAjax` is called with the same `data` and `url` arguments, it will return the result immediately, in the form of a resolved `$.Deferred`. (If you have no idea what a deferred is, that's ok. Just treat this exactly like `$.ajax`...with a few caveats. See below.)
 
 ## Install
 
@@ -13,7 +13,7 @@ Two options:
 
 ## Example Usage
 
-Use it exactly how you would use `$.ajax`. Optionally, pass in `localStorage: true` as one of the key-value pairs to cache the result in localStorage. An example:
+Use it exactly how you would use `$.ajax`. Optionally, pass in `localStorage: true` or `sessionStorage: true` as one of the key-value pairs to cache the result in localStorage or sessionStorage. An example:
 
 ```javascript
 // this goes and does the ajax call and logs the result after some time
@@ -55,13 +55,13 @@ ajaxCall.abort(); // will throw an error if $.memoizedAjax() returns a cached re
 ajaxCall.abort && ajaxCall.abort();
 ```
 
-One other thing to keep in mind is that **accessing localStorage is a blocking process**. Thus, it's not a good idea to do 10 `memoizedAjax` calls with localStorage in a row, as this can lock up your web page.
+One other thing to keep in mind is that **accessing localStorage or sessionStorage is a blocking process**. Thus, it's not a good idea to do 10 `memoizedAjax` calls in a row with storage enabled, as this can lock up your web page.
 
 ## Advanced
 
 ### Customizing storage location
 
-By default, `$.memoizedAjax` will store the results of ajax calls in localStorage with `memoizedAjax | url` as the key. For example, if you do this:
+By default, `$.memoizedAjax` will store the results of ajax calls in storage with `memoizedAjax | url` as the key. For example, if you do this:
 
 ```javascript
 $.memoizedAjax({
