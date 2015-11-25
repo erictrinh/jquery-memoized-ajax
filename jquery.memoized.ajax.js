@@ -12,13 +12,13 @@
   $.memoizedAjax = function memoizedAjax(opts) {
     var memo,
       key = opts.cacheKey || opts.url,
-      hash = hashFunc(opts.data);
+      hash = hashFunc(opts.data),
+      storage = storageObject(opts);
 
-    if (inMemory[key]) {
-      memo = inMemory[key];
+    if (storage) {
+      memo = store(storage, getStorageAddress()) || {};
     } else {
-      var storage = storageObject(opts);
-      memo = inMemory[key] = (storage ? store(storage, getStorageAddress()) : {}) || {};
+      memo = inMemory[key] || {};
     }
 
     if (memo[hash]) {
@@ -27,7 +27,6 @@
         // `localStorage: false` and then `localStorage: true` later
         // ensures syncing between memory and localStorage
         .done(function() {
-          var storage = storageObject(opts);
           if (storage) {
             store(storage, getStorageAddress(), memo);
           }
@@ -40,10 +39,10 @@
     return $.ajax.call(this, opts).done(function(result) {
       memo[hash] = result;
 
-      var storage = storageObject(opts);
-
       if (storage) {
         store(storage, getStorageAddress(), memo);
+      } else {
+        inMemory[key] = memo;
       }
     });
 

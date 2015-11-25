@@ -2,7 +2,10 @@ describe('memoizedAjax', function() {
 
   before(function() {
     localStorage.clear();
+    sessionStorage.clear();
+  });
 
+  beforeEach(function() {
     var returnVal = {
       message: 'this is a successful ajax request'
     };
@@ -12,8 +15,13 @@ describe('memoizedAjax', function() {
       .returns($.Deferred().resolve(returnVal));
   });
 
-  after(function() {
+  afterEach(function() {
     $.ajax.restore();
+  });
+
+  after(function() {
+    localStorage.clear();
+    sessionStorage.clear();
   });
 
   var ajaxOptions = {
@@ -35,7 +43,7 @@ describe('memoizedAjax', function() {
     $.memoizedAjax(extend(ajaxOptions, {
       url: '/test2',
       success: function() {
-        expect($.ajax.calledTwice).to.be.true;
+        expect($.ajax.calledOnce).to.be.true;
         done();
       }
     }));
@@ -44,7 +52,7 @@ describe('memoizedAjax', function() {
   it('should not call the ajax method again if url is the same', function(done) {
     $.memoizedAjax(extend(ajaxOptions, {
       success: function() {
-        expect($.ajax.calledThrice).to.be.false;
+        expect($.ajax.calledOnce).to.be.false;
         done();
       }
     }));
@@ -53,7 +61,7 @@ describe('memoizedAjax', function() {
   it('should return the results in the success callback', function(done) {
     $.memoizedAjax(extend(ajaxOptions, {
       success: function(results) {
-        expect($.ajax.calledThrice).to.be.false;
+        expect($.ajax.calledOnce).to.be.false;
         expect(results).to.deep.equal({
           message: 'this is a successful ajax request'
         });
@@ -78,11 +86,20 @@ describe('memoizedAjax', function() {
   it('should store the results in localStorage if option is passed', function(done) {
     $.memoizedAjax(extend(ajaxOptions, {
       localStorage: true,
-      success: function(results) {
-        expect(localStorage.getItem('memoizedAjax | /test')).to.not.be.null;
-        done();
-      }
-    }));
+    })).done(function(results) {
+      expect(localStorage.getItem('memoizedAjax | /test')).to.not.be.null;
+      done();
+    });
+  });
+
+  it('should call the ajax method if localStorage option is passed, but no localStorage item exists', function(done) {
+    localStorage.removeItem('memoizedAjax | /test');
+    $.memoizedAjax(extend(ajaxOptions, {
+      localStorage: true,
+    })).done(function() {
+      expect($.ajax.calledOnce).to.be.true;
+      done();
+    });
   });
 
   it('should not have the results in sessionStorage if no option passed', function() {
@@ -92,11 +109,10 @@ describe('memoizedAjax', function() {
   it('should store the results in sessionStorage if option is passed', function(done) {
     $.memoizedAjax(extend(ajaxOptions, {
       sessionStorage: true,
-      success: function(results) {
-        expect(sessionStorage.getItem('memoizedAjax | /test')).to.not.be.null;
-        done();
-      }
-    }));
+    })).done(function(results) {
+      expect(sessionStorage.getItem('memoizedAjax | /test')).to.not.be.null;
+      done();
+    });
   });
 
   var localCacheKeyParams = {
@@ -105,22 +121,20 @@ describe('memoizedAjax', function() {
     cacheKey: 'testKey'
   };
 
-  it('should call ajax the first time, using cacheKey', function(done) {
+  it('should call ajax the first time, using cacheKey for localStorage', function(done) {
     $.memoizedAjax(extend(ajaxOptions, localCacheKeyParams, {
       success: function() {
-        expect($.ajax.calledThrice).to.be.true;
+        expect($.ajax.calledOnce).to.be.true;
         done();
       }
     }));
   });
 
   it('should not store results in default localStorage location if using cacheKey', function(done) {
-    $.memoizedAjax(extend(ajaxOptions, localCacheKeyParams, {
-      success: function(results) {
-        expect(localStorage.getItem('memoizedAjax | /cacheKey')).to.be.null;
-        done();
-      }
-    }));
+    $.memoizedAjax(extend(ajaxOptions, localCacheKeyParams)).done(function(results) {
+      expect(localStorage.getItem('memoizedAjax | /cacheKey')).to.be.null;
+      done();
+    });
   });
 
   it('should store results in localStorage location defined by cacheKey', function() {
@@ -133,22 +147,20 @@ describe('memoizedAjax', function() {
     cacheKey: 'testKey'
   };
 
-  it('should call ajax the first time, using cacheKey', function(done) {
+  it('should call ajax the first time, using cacheKey for sessionStorage', function(done) {
     $.memoizedAjax(extend(ajaxOptions, sessionCacheKeyParams, {
       success: function() {
-        expect($.ajax.calledThrice).to.be.true;
+        expect($.ajax.calledOnce).to.be.true;
         done();
       }
     }));
   });
 
   it('should not store results in default sessionStorage location if using cacheKey', function(done) {
-    $.memoizedAjax(extend(ajaxOptions, sessionCacheKeyParams, {
-      success: function(results) {
-        expect(localStorage.getItem('memoizedAjax | /cacheKey')).to.be.null;
-        done();
-      }
-    }));
+    $.memoizedAjax(extend(ajaxOptions, sessionCacheKeyParams)).done(function(results) {
+      expect(localStorage.getItem('memoizedAjax | /cacheKey')).to.be.null;
+      done();
+    });
   });
 
   it('should store results in sessionStorage location defined by cacheKey', function() {
