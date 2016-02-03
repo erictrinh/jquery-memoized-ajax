@@ -60,7 +60,12 @@
       return item && JSON.parse(item);
     // set
     } else {
-      storage.setItem(key, JSON.stringify(value));
+      try {
+        storage.setItem(key, JSON.stringify(value));
+      } catch (err) {
+        // prevent catching old values
+        storage.removeItem(key);
+      }
     }
   }
 
